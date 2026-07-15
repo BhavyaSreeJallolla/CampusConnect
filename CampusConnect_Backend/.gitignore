@@ -1,0 +1,34 @@
+# Maven
+target/
+
+# Eclipse / Spring Tool Suite
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Maven Wrapper JAR (keep these files)
+!.mvn/wrapper/maven-wrapper.jar
+
+# Application configuration (only if it contains secrets)
+# application.properties
+# application.yml
+
+# Environment variables
+.env
+
+# Java
+*.class
