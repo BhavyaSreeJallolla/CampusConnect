@@ -70,7 +70,15 @@ public class SecurityConfig {
 
                 .requestMatchers("/api/alumni/**")
                 .hasAnyRole("ALUMNI", "ADMIN")
+                
+                .requestMatchers("/api/users/student-test")
+                .hasRole("STUDENT")
 
+                .requestMatchers("/api/users/alumni-test")
+                .hasRole("ALUMNI")
+
+                .requestMatchers("/api/connections/**")
+                .hasAnyRole("STUDENT", "ALUMNI", "ADMIN")
 
                 .anyRequest()
                 .authenticated()
