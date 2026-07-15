@@ -18,14 +18,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.campusconnect.security.JwtAuthenticationFilter;
 import com.campusconnect.service.CustomUserDetailsService;
 
-
 @Configuration
 public class SecurityConfig {
 
-
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService customUserDetailsService;
-
 
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -35,43 +32,46 @@ public class SecurityConfig {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
-
 
         http
             .csrf(csrf -> csrf.disable())
 
             .sessionManagement(session ->
-                session.sessionCreationPolicy(
-                    SessionCreationPolicy.STATELESS
-                )
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
             .authorizeHttpRequests(auth -> auth
 
-                // Allow registration and login
+                // Public APIs
                 .requestMatchers(
-                    "/api/users/register",
-                    "/api/users/login"
+                        "/api/users/register",
+                        "/api/users/login"
                 ).permitAll()
 
-
-                // Role based access
+                // Admin APIs
                 .requestMatchers("/api/admin/**")
                 .hasRole("ADMIN")
 
-
+                // Student APIs
                 .requestMatchers("/api/students/**")
                 .hasAnyRole("STUDENT", "ADMIN")
 
-
+                // Alumni APIs
                 .requestMatchers("/api/alumni/**")
                 .hasAnyRole("ALUMNI", "ADMIN")
 
+                // Guidance APIs
+                .requestMatchers("/api/guidance/**")
+                .hasAnyRole("ALUMNI", "ADMIN")
 
+                // Chat APIs
+                .requestMatchers("/api/chat/**")
+                .hasAnyRole("STUDENT", "ALUMNI", "ADMIN")
+
+                // All other APIs
                 .anyRequest()
                 .authenticated()
             )
@@ -79,14 +79,12 @@ public class SecurityConfig {
             .authenticationProvider(authenticationProvider())
 
             .addFilterBefore(
-                jwtAuthenticationFilter,
-                UsernamePasswordAuthenticationFilter.class
+                    jwtAuthenticationFilter,
+                    UsernamePasswordAuthenticationFilter.class
             );
-
 
         return http.build();
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -99,10 +97,8 @@ public class SecurityConfig {
         return provider;
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 }

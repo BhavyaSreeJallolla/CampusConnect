@@ -1,6 +1,7 @@
 package com.campusconnect.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.campusconnect.dto.StatusUpdateRequest;
@@ -14,6 +15,11 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
+
+    @GetMapping("/test")
+    public String test(Authentication auth) {
+        return auth.getAuthorities().toString();
+    }
 
     @PutMapping("/users/{userId}/status")
     public User updateStatus(@PathVariable Long userId,
