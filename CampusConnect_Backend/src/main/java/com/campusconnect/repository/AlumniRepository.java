@@ -23,5 +23,6 @@ public interface AlumniRepository extends JpaRepository<Alumni, Long> {
 
     // Search by Expertise/Skills
     List<Alumni> findByExpertiseContainingIgnoreCase(String expertise);
+    Optional<Alumni> findByUser(User user);
 
 }

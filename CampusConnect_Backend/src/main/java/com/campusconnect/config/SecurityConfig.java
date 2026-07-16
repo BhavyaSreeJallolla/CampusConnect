@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
@@ -28,6 +28,7 @@ import com.campusconnect.service.CustomUserDetailsService;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     private final CustomUserDetailsService customUserDetailsService;
 
     public SecurityConfig(
@@ -39,18 +40,21 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http) throws Exception {
 
         http
             .cors(cors -> {})
             .csrf(csrf -> csrf.disable())
 
+
+            // JWT based authentication
             .sessionManagement(session ->
                 session.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS
                 )
             )
+
 
             .authorizeHttpRequests(auth -> auth
 
@@ -66,7 +70,6 @@ public class SecurityConfig {
 
                 // Student APIs
                 .requestMatchers("/api/students/**")
-                .hasAnyRole("STUDENT", "ADMIN")
 
                 // Alumni APIs
                 .requestMatchers("/api/alumni/**")
@@ -81,9 +84,16 @@ public class SecurityConfig {
                 // Any other request
                 .anyRequest()
                 .authenticated()
+
             )
 
-            .authenticationProvider(authenticationProvider())
+
+
+            .authenticationProvider(
+                authenticationProvider()
+            )
+
+
 
             .addFilterBefore(
                     jwtAuthenticationFilter,
@@ -96,10 +106,17 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(customUserDetailsService);
 
-        provider.setPasswordEncoder(passwordEncoder());
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(
+                    customUserDetailsService
+                );
+
+
+        provider.setPasswordEncoder(
+                passwordEncoder()
+        );
+
 
         return provider;
     }
@@ -107,6 +124,7 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+
     }
 
     @Bean
