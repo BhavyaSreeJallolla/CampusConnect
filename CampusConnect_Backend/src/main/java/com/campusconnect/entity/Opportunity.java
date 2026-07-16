@@ -1,6 +1,14 @@
 package com.campusconnect.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "opportunities")
@@ -10,20 +18,28 @@ public class Opportunity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-
-    private String companyName;
-
-    private String description;
-
-    private String type;   // Internship / Job
-
     private Long alumniId;
 
+    private String company;
+
+    private String role;
+
+    @Column(length = 1000)
+    private String description;
+
+    private String location;
+
+    private String type;
+
+    private LocalDateTime createdDate;
+
+    @PrePersist
+    public void onCreate() {
+        this.createdDate = LocalDateTime.now();
+    }
 
     public Opportunity() {
     }
-
 
     public Long getId() {
         return id;
@@ -33,24 +49,29 @@ public class Opportunity {
         this.id = id;
     }
 
-
-    public String getTitle() {
-        return title;
+    public Long getAlumniId() {
+        return alumniId;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setAlumniId(Long alumniId) {
+        this.alumniId = alumniId;
     }
 
-
-    public String getCompanyName() {
-        return companyName;
+    public String getCompany() {
+        return company;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+    public void setCompany(String company) {
+        this.company = company;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public String getDescription() {
         return description;
@@ -60,6 +81,13 @@ public class Opportunity {
         this.description = description;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     public String getType() {
         return type;
@@ -69,12 +97,11 @@ public class Opportunity {
         this.type = type;
     }
 
-
-    public Long getAlumniId() {
-        return alumniId;
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 
-    public void setAlumniId(Long alumniId) {
-        this.alumniId = alumniId;
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 }

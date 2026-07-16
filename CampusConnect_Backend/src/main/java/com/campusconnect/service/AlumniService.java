@@ -32,6 +32,9 @@ public interface AlumniService {
     // Search Alumni by Designation
     List<Alumni> searchByDesignation(String designation);
 
+    // Search Alumni by Designation
+    List<Alumni> searchByDesignation(String designation);
+
     // Get Alumni by User
     Alumni getAlumniByUser(User user);
 }

@@ -12,67 +12,45 @@ import com.campusconnect.service.OpportunityService;
 @Service
 public class OpportunityServiceImpl implements OpportunityService {
 
-
     @Autowired
     private OpportunityRepository opportunityRepository;
 
-
     @Override
     public Opportunity createOpportunity(Opportunity opportunity) {
-
         return opportunityRepository.save(opportunity);
     }
 
-
     @Override
     public List<Opportunity> getAllOpportunities() {
-
         return opportunityRepository.findAll();
     }
 
-
-    @Override
-    public List<Opportunity> getOpportunitiesByAlumni(Long alumniId) {
-
-        return opportunityRepository.findByAlumniId(alumniId);
-    }
-
-
     @Override
     public Opportunity getOpportunityById(Long id) {
-
-        return opportunityRepository.findById(id)
-                .orElseThrow(
-                    () -> new RuntimeException("Opportunity not found")
-                );
+        return opportunityRepository.findById(id).orElse(null);
     }
-
 
     @Override
     public Opportunity updateOpportunity(Long id, Opportunity opportunity) {
 
-        Opportunity existing =
-                opportunityRepository.findById(id)
-                .orElseThrow(
-                    () -> new RuntimeException("Opportunity not found")
-                );
+        Opportunity existingOpportunity = opportunityRepository.findById(id).orElse(null);
 
+        if (existingOpportunity != null) {
+            existingOpportunity.setAlumniId(opportunity.getAlumniId());
+            existingOpportunity.setCompany(opportunity.getCompany());
+            existingOpportunity.setRole(opportunity.getRole());
+            existingOpportunity.setDescription(opportunity.getDescription());
+            existingOpportunity.setLocation(opportunity.getLocation());
+            existingOpportunity.setType(opportunity.getType());
 
-        existing.setTitle(opportunity.getTitle());
-        existing.setCompanyName(opportunity.getCompanyName());
-        existing.setDescription(opportunity.getDescription());
-        existing.setType(opportunity.getType());
-        existing.setAlumniId(opportunity.getAlumniId());
+            return opportunityRepository.save(existingOpportunity);
+        }
 
-
-        return opportunityRepository.save(existing);
+        return null;
     }
-
 
     @Override
     public void deleteOpportunity(Long id) {
-
         opportunityRepository.deleteById(id);
     }
-
 }

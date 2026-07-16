@@ -1,6 +1,5 @@
 package com.campusconnect.security;
 
-
 import java.io.IOException;
 
 
@@ -40,10 +39,6 @@ public class JwtAuthenticationFilter
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-
-
-
-
     @Override
     protected void doFilterInternal(
 
@@ -55,72 +50,36 @@ public class JwtAuthenticationFilter
 
             throws ServletException, IOException {
 
-
-
-        String path =
-                request.getServletPath();
-
-
-
-        // Skip public APIs
-
-        if(path.equals("/api/users/login")
-                ||
-           path.equals("/api/users/register")) {
-
-
-            filterChain.doFilter(
-                    request,
-                    response
-            );
-
+        // Allow CORS Preflight Requests
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
             return;
         }
 
+        String path = request.getServletPath();
 
+        // Skip Login & Register
+        if (path.equals("/api/users/login")
+                || path.equals("/api/users/register")) {
 
-
-
-        String authHeader =
-                request.getHeader(
-                        "Authorization"
-                );
-
-
-
-        String token = null;
-
-        String email = null;
-
-
-
-        if(authHeader != null
-                &&
-           authHeader.startsWith("Bearer ")) {
-
-
-
-            token =
-              authHeader.substring(7);
-
-
-
-            email =
-              jwtService.extractUsername(token);
-
+            filterChain.doFilter(request, response);
+            return;
         }
 
+        String authHeader = request.getHeader("Authorization");
 
+        // No Token
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
+        String token = authHeader.substring(7);
 
+        String email = jwtService.extractUsername(token);
 
-        if(email != null
-            &&
-           SecurityContextHolder
-           .getContext()
-           .getAuthentication()==null) {
-
-
+        if (email != null
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails =
                     userDetailsService
@@ -128,53 +87,25 @@ public class JwtAuthenticationFilter
 
 
 
-
-            if(jwtService.validateToken(
-                    token,
-                    email)) {
-
-
+            if (jwtService.validateToken(token, email)) {
 
                 UsernamePasswordAuthenticationToken authentication =
-
-                    new UsernamePasswordAuthenticationToken(
-
-                        userDetails,
-
-                        null,
-
-                        userDetails.getAuthorities()
-
-                    );
-
-
-
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities());
 
                 authentication.setDetails(
+                        new WebAuthenticationDetailsSource()
+                                .buildDetails(request));
 
-                    new WebAuthenticationDetailsSource()
-                    .buildDetails(request)
-
-                );
-
-
-
-
-                SecurityContextHolder
-                .getContext()
-                .setAuthentication(authentication);
-
+                SecurityContextHolder.getContext()
+                        .setAuthentication(authentication);
             }
 
         }
 
-
-
-        filterChain.doFilter(
-                request,
-                response
-        );
-
+        filterChain.doFilter(request, response);
     }
 
 }

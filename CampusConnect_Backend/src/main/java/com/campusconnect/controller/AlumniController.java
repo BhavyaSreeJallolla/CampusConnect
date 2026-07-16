@@ -17,6 +17,7 @@ public class AlumniController {
     private AlumniService alumniService;
 
 
+    // Create Alumni
     @PostMapping
     public Alumni saveAlumni(@RequestBody Alumni alumni) {
         return alumniService.saveAlumni(alumni);
@@ -37,7 +38,21 @@ public class AlumniController {
     }
 
 
+    // Update Alumni
+    @PutMapping("/{alumniId}")
+    public Alumni updateAlumni(
+            @PathVariable Long alumniId,
+            @RequestBody Alumni alumni) {
 
+        return alumniService.updateAlumni(alumniId, alumni);
+    }
+    // Delete Alumni
+    @DeleteMapping("/{alumniId}")
+    public String deleteAlumni(@PathVariable Long alumniId) {
+
+        alumniService.deleteAlumni(alumniId);
+
+        return "Alumni deleted successfully.";
     }
 
 

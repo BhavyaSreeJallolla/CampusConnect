@@ -10,8 +10,6 @@ public interface OpportunityService {
 
     List<Opportunity> getAllOpportunities();
 
-    List<Opportunity> getOpportunitiesByAlumni(Long alumniId);
-
     Opportunity getOpportunityById(Long id);
 
     Opportunity updateOpportunity(Long id, Opportunity opportunity);
