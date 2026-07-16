@@ -27,6 +27,7 @@ public interface AlumniService {
 
     // Search Alumni by Expertise
     List<Alumni> searchByExpertise(String expertise);
+    void deleteMyProfile(String email);
 
     // Search Alumni by Designation
     List<Alumni> searchByDesignation(String designation);

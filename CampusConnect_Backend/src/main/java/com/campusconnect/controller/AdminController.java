@@ -7,9 +7,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.campusconnect.dto.StatusUpdateRequest;
-import com.campusconnect.dto.UserRequestDTO;
+
 import com.campusconnect.entity.User;
 import com.campusconnect.service.AdminService;
+import com.campusconnect.service.AlumniService;
+import com.campusconnect.service.StudentService;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -19,10 +21,6 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    @GetMapping("/test")
-    public String test(Authentication auth) {
-        return auth.getAuthorities().toString();
-    }
 
     @PutMapping("/users/{userId}/status")
     public User updateStatus(@PathVariable Long userId,
@@ -31,11 +29,5 @@ public class AdminController {
         return adminService.updateStatus(userId, request.getStatus());
     }
 
-    // Get Pending User Requests
-    @GetMapping("/requests")
-    public List<UserRequestDTO> getPendingUsers() {
 
-        return adminService.getPendingUsers();
-
-    }
 }

@@ -2,6 +2,7 @@ package com.campusconnect.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.campusconnect.entity.Alumni;
@@ -16,7 +17,6 @@ public class AlumniController {
     private AlumniService alumniService;
 
 
-    // Create Alumni
     @PostMapping
     public Alumni saveAlumni(@RequestBody Alumni alumni) {
         return alumniService.saveAlumni(alumni);
@@ -37,21 +37,7 @@ public class AlumniController {
     }
 
 
-    // Update Alumni
-    @PutMapping("/{alumniId}")
-    public Alumni updateAlumni(
-            @PathVariable Long alumniId,
-            @RequestBody Alumni alumni) {
 
-        return alumniService.updateAlumni(alumniId, alumni);
-    }
-    // Delete Alumni
-    @DeleteMapping("/{alumniId}")
-    public String deleteAlumni(@PathVariable Long alumniId) {
-
-        alumniService.deleteAlumni(alumniId);
-
-        return "Alumni deleted successfully.";
     }
 
 

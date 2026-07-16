@@ -37,17 +37,38 @@ public class AlumniServiceImpl implements AlumniService {
         Alumni existingAlumni = alumniRepository.findById(alumniId)
                 .orElseThrow(() -> new RuntimeException("Alumni not found"));
 
-        existingAlumni.setCollegeName(alumni.getCollegeName());
-        existingAlumni.setGraduationYear(alumni.getGraduationYear());
-        existingAlumni.setCompanyName(alumni.getCompanyName());
-        existingAlumni.setDesignation(alumni.getDesignation());
-        existingAlumni.setExperience(alumni.getExperience());
-        existingAlumni.setPhone(alumni.getPhone());
-        existingAlumni.setBio(alumni.getBio());
-        existingAlumni.setExpertise(alumni.getExpertise());
-        existingAlumni.setLinkedinUrl(alumni.getLinkedinUrl());
-        existingAlumni.setProfileImage(alumni.getProfileImage());
-        existingAlumni.setCompanyIdCard(alumni.getCompanyIdCard());
+        if (alumni.getCollegeName() != null)
+            existingAlumni.setCollegeName(alumni.getCollegeName());
+
+        if (alumni.getGraduationYear() != null)
+            existingAlumni.setGraduationYear(alumni.getGraduationYear());
+
+        if (alumni.getCompanyName() != null)
+            existingAlumni.setCompanyName(alumni.getCompanyName());
+
+        if (alumni.getDesignation() != null)
+            existingAlumni.setDesignation(alumni.getDesignation());
+
+        if (alumni.getExperience() != null)
+            existingAlumni.setExperience(alumni.getExperience());
+
+        if (alumni.getPhone() != null)
+            existingAlumni.setPhone(alumni.getPhone());
+
+        if (alumni.getBio() != null)
+            existingAlumni.setBio(alumni.getBio());
+
+        if (alumni.getExpertise() != null)
+            existingAlumni.setExpertise(alumni.getExpertise());
+
+        if (alumni.getLinkedinUrl() != null)
+            existingAlumni.setLinkedinUrl(alumni.getLinkedinUrl());
+
+        if (alumni.getProfileImage() != null)
+            existingAlumni.setProfileImage(alumni.getProfileImage());
+
+        if (alumni.getCompanyIdCard() != null)
+            existingAlumni.setCompanyIdCard(alumni.getCompanyIdCard());
 
         return alumniRepository.save(existingAlumni);
     }

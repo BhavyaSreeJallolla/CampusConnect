@@ -2,7 +2,7 @@ package com.campusconnect.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
@@ -65,9 +65,7 @@ public class SecurityConfig {
                 // Public APIs
                 .requestMatchers(
                     "/api/users/register",
-                    "/api/users/login"
-                )
-                .permitAll()
+
 
 
 
@@ -79,41 +77,19 @@ public class SecurityConfig {
 
                 // Student APIs
                 .requestMatchers("/api/students/**")
-                .hasAnyRole(
-                    "STUDENT",
-                    "ADMIN"
-                )
+
+
+                // Only Alumni can update their own profile
+                .requestMatchers(HttpMethod.PUT, "/api/alumni/profile")
+                .hasAnyRole("ALUMNI","ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/alumni/profile").hasRole("ALUMNI")
 
 
 
-                // Alumni APIs
-                .requestMatchers("/api/alumni/**")
-                .hasAnyRole(
-                    "ALUMNI",
-                    "ADMIN"
-                )
-
-
-
-                // Guidance APIs
-                .requestMatchers("/api/guidance/**")
-                .hasAnyRole(
-                    "ALUMNI",
-                    "ADMIN"
-                )
-
-
-
-                // Connection APIs
-                // Send request, accept, view connected students
-                .requestMatchers("/api/connections/**")
-                .hasAnyRole(
-                    "STUDENT",
-                    "ALUMNI",
-                    "ADMIN"
-                )
-
-
+                // Everyone can view/search alumni
+                .requestMatchers(HttpMethod.GET, "/api/alumni/**")
+                .hasAnyRole("STUDENT", "ALUMNI", "ADMIN")
+                
 
                 // Chat APIs
                 .requestMatchers("/api/chat/**")

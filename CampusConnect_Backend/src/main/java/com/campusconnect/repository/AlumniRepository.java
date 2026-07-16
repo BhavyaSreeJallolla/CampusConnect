@@ -19,5 +19,6 @@ public interface AlumniRepository extends JpaRepository<Alumni, Long> {
     List<Alumni> findByDesignationContainingIgnoreCase(String designation);
 
     List<Alumni> findByExpertiseContainingIgnoreCase(String expertise);
+    Optional<Alumni> findByUser(User user);
 
 }
