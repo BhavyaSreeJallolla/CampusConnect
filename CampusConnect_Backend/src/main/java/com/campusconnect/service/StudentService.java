@@ -15,5 +15,7 @@ public interface StudentService {
     List<Student> getAllStudents();
 
     void deleteStudent(Long studentId);
+    Student updateMyProfile(String email, Student student);
+    void deleteMyProfile(String email);
 
 }

@@ -25,5 +25,14 @@ public class UserController {
     public LoginResponse login(@RequestBody LoginRequest request) {
         return userService.login(request);
     }
+    @GetMapping("/student-test")
+    public String studentTest() {
+        return "Student Access Successful";
+    }
+
+    @GetMapping("/alumni-test")
+    public String alumniTest() {
+        return "Alumni Access Successful";
+    }
 
 }

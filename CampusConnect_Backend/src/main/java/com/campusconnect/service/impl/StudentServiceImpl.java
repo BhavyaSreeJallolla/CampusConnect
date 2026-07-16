@@ -70,4 +70,61 @@ public class StudentServiceImpl implements StudentService {
 
         studentRepository.delete(student);
     }
+    @Override
+    public Student updateMyProfile(String email, Student student) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Student existingStudent = studentRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Student profile not found"));
+
+        if (student.getRollNumber() != null)
+            existingStudent.setRollNumber(student.getRollNumber());
+
+        if (student.getCollegeName() != null)
+            existingStudent.setCollegeName(student.getCollegeName());
+
+        if (student.getBranch() != null)
+            existingStudent.setBranch(student.getBranch());
+
+        if (student.getYear() != null)
+            existingStudent.setYear(student.getYear());
+
+        if (student.getPhone() != null)
+            existingStudent.setPhone(student.getPhone());
+
+        if (student.getBio() != null)
+            existingStudent.setBio(student.getBio());
+
+        if (student.getSkills() != null)
+            existingStudent.setSkills(student.getSkills());
+
+        if (student.getGithubUrl() != null)
+            existingStudent.setGithubUrl(student.getGithubUrl());
+
+        if (student.getLinkedinUrl() != null)
+            existingStudent.setLinkedinUrl(student.getLinkedinUrl());
+
+        if (student.getProfileImage() != null)
+            existingStudent.setProfileImage(student.getProfileImage());
+
+        if (student.getCollegeIdCard() != null)
+            existingStudent.setCollegeIdCard(student.getCollegeIdCard());
+
+        return studentRepository.save(existingStudent);
+    }
+    @Override
+    public void deleteMyProfile(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Student student = studentRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Student profile not found"));
+
+        studentRepository.delete(student);
+
+        userRepository.delete(user);
+    }
 }

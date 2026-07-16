@@ -1,8 +1,7 @@
 package com.campusconnect.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.campusconnect.entity.Student;
@@ -16,36 +15,26 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    // Create Student
+    // Student creates own profile
     @PostMapping
     public Student saveStudent(@RequestBody Student student) {
         return studentService.saveStudent(student);
     }
 
-    // Get Student By Id
-    @GetMapping("/{studentId}")
-    public Student getStudentById(@PathVariable Long studentId) {
-        return studentService.getStudentById(studentId);
-    }
+    // Student updates own profile
+    @PutMapping("/profile")
+    public Student updateMyProfile(@RequestBody Student student,
+                                   Authentication authentication) {
 
-    // Get All Students
-    @GetMapping
-    public List<Student> getAllStudents() {
-        return studentService.getAllStudents();
+        return studentService.updateMyProfile(
+                authentication.getName(),
+                student);
     }
+    @DeleteMapping("/profile")
+    public String deleteMyProfile(Authentication authentication) {
 
-    // Update Student
-    @PutMapping("/{studentId}")
-    public Student updateStudent(@PathVariable Long studentId,
-                                 @RequestBody Student student) {
-        return studentService.updateStudent(studentId, student);
+        studentService.deleteMyProfile(authentication.getName());
+
+        return "Student account deleted successfully.";
     }
-
-    // Delete Student
-    @DeleteMapping("/{studentId}")
-    public String deleteStudent(@PathVariable Long studentId) {
-        studentService.deleteStudent(studentId);
-        return "Student deleted successfully.";
-    }
-
 }
