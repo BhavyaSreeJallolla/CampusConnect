@@ -2,7 +2,7 @@ package com.campusconnect.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
@@ -65,12 +65,25 @@ public class SecurityConfig {
 
 
                 .requestMatchers("/api/students/**")
-                .hasAnyRole("STUDENT", "ADMIN")
+                .hasAnyRole("STUDENT","ADMIN")
+
+                .requestMatchers(HttpMethod.DELETE, "/api/students/profile").hasRole("STUDENT")
+//               
+                
+             // Only Alumni can create their profile
+                .requestMatchers(HttpMethod.POST, "/api/alumni")
+                .hasRole("ALUMNI")
+
+                // Only Alumni can update their own profile
+                .requestMatchers(HttpMethod.PUT, "/api/alumni/profile")
+                .hasAnyRole("ALUMNI","ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/alumni/profile").hasRole("ALUMNI")
 
 
-                .requestMatchers("/api/alumni/**")
-                .hasAnyRole("ALUMNI", "ADMIN")
-
+                // Everyone can view/search alumni
+                .requestMatchers(HttpMethod.GET, "/api/alumni/**")
+                .hasAnyRole("STUDENT", "ALUMNI", "ADMIN")
+                
 
                 .anyRequest()
                 .authenticated()
