@@ -18,11 +18,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.campusconnect.security.JwtAuthenticationFilter;
 import com.campusconnect.service.CustomUserDetailsService;
 
+
 @Configuration
 public class SecurityConfig {
 
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     private final CustomUserDetailsService customUserDetailsService;
+
+
 
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -32,73 +37,149 @@ public class SecurityConfig {
         this.customUserDetailsService = customUserDetailsService;
     }
 
+
+
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http) throws Exception {
+
 
         http
+
+            // Disable CSRF for REST API
             .csrf(csrf -> csrf.disable())
 
+
+            // JWT based authentication
             .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                session.sessionCreationPolicy(
+                    SessionCreationPolicy.STATELESS
+                )
             )
+
 
             .authorizeHttpRequests(auth -> auth
 
+
                 // Public APIs
                 .requestMatchers(
-                        "/api/users/register",
-                        "/api/users/login"
-                ).permitAll()
+                    "/api/users/register",
+                    "/api/users/login"
+                )
+                .permitAll()
+
+
 
                 // Admin APIs
                 .requestMatchers("/api/admin/**")
                 .hasRole("ADMIN")
 
+
+
                 // Student APIs
                 .requestMatchers("/api/students/**")
-                .hasAnyRole("STUDENT", "ADMIN")
+                .hasAnyRole(
+                    "STUDENT",
+                    "ADMIN"
+                )
+
+
 
                 // Alumni APIs
                 .requestMatchers("/api/alumni/**")
-                .hasAnyRole("ALUMNI", "ADMIN")
+                .hasAnyRole(
+                    "ALUMNI",
+                    "ADMIN"
+                )
+
+
 
                 // Guidance APIs
                 .requestMatchers("/api/guidance/**")
-                .hasAnyRole("ALUMNI", "ADMIN")
+                .hasAnyRole(
+                    "ALUMNI",
+                    "ADMIN"
+                )
+
+
+
+                // Connection APIs
+                // Send request, accept, view connected students
+                .requestMatchers("/api/connections/**")
+                .hasAnyRole(
+                    "STUDENT",
+                    "ALUMNI",
+                    "ADMIN"
+                )
+
+
 
                 // Chat APIs
                 .requestMatchers("/api/chat/**")
-                .hasAnyRole("STUDENT", "ALUMNI", "ADMIN")
+                .hasAnyRole(
+                    "STUDENT",
+                    "ALUMNI",
+                    "ADMIN"
+                )
 
-                // All other APIs
+
+
+                // Everything else
                 .anyRequest()
                 .authenticated()
+
             )
 
-            .authenticationProvider(authenticationProvider())
+
+
+            .authenticationProvider(
+                authenticationProvider()
+            )
+
+
 
             .addFilterBefore(
-                    jwtAuthenticationFilter,
-                    UsernamePasswordAuthenticationFilter.class
+                jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class
             );
+
+
 
         return http.build();
     }
 
+
+
+
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(customUserDetailsService);
 
-        provider.setPasswordEncoder(passwordEncoder());
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(
+                    customUserDetailsService
+                );
+
+
+        provider.setPasswordEncoder(
+                passwordEncoder()
+        );
+
 
         return provider;
     }
 
+
+
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder();
+
     }
+
 }

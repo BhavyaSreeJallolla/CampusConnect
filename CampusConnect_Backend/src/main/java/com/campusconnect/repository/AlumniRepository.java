@@ -12,16 +12,12 @@ import com.campusconnect.entity.User;
 @Repository
 public interface AlumniRepository extends JpaRepository<Alumni, Long> {
 
-    // Find alumni by User
     Optional<Alumni> findByUser(User user);
 
-    // Search by Company
     List<Alumni> findByCompanyNameContainingIgnoreCase(String companyName);
 
-    // Search by Designation
     List<Alumni> findByDesignationContainingIgnoreCase(String designation);
 
-    // Search by Expertise/Skills
     List<Alumni> findByExpertiseContainingIgnoreCase(String expertise);
 
 }

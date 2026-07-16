@@ -45,8 +45,6 @@ public class AlumniController {
 
         return alumniService.updateAlumni(alumniId, alumni);
     }
-
-
     // Delete Alumni
     @DeleteMapping("/{alumniId}")
     public String deleteAlumni(@PathVariable Long alumniId) {
@@ -65,7 +63,6 @@ public class AlumniController {
         return alumniService.searchByCompany(companyName);
     }
 
-
     // Search By Designation
     @GetMapping("/search/designation")
     public List<Alumni> searchByDesignation(
@@ -73,7 +70,6 @@ public class AlumniController {
 
         return alumniService.searchByDesignation(designation);
     }
-
 
     // Search By Expertise
     @GetMapping("/search/expertise")
