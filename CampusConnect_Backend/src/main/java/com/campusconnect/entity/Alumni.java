@@ -1,6 +1,7 @@
 package com.campusconnect.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "alumni")
@@ -41,7 +42,15 @@ public class Alumni {
 
     private String companyIdCard;
 
+    @Column(updatable = false)
+    private LocalDateTime createdDate;
+
     public Alumni() {
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdDate = LocalDateTime.now();
     }
 
     public Alumni(Long alumniId, User user, String collegeName,
@@ -49,7 +58,8 @@ public class Alumni {
                   String designation, Integer experience,
                   String phone, String bio, String expertise,
                   String linkedinUrl, String profileImage,
-                  String companyIdCard) {
+                  String companyIdCard, LocalDateTime createdDate) {
+
         this.alumniId = alumniId;
         this.user = user;
         this.collegeName = collegeName;
@@ -63,6 +73,7 @@ public class Alumni {
         this.linkedinUrl = linkedinUrl;
         this.profileImage = profileImage;
         this.companyIdCard = companyIdCard;
+        this.createdDate = createdDate;
     }
 
     public Long getAlumniId() {
@@ -167,5 +178,13 @@ public class Alumni {
 
     public void setCompanyIdCard(String companyIdCard) {
         this.companyIdCard = companyIdCard;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 }

@@ -1,4 +1,5 @@
 package com.campusconnect.security;
+
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,68 +26,63 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
-    	 if (request.getServletPath().equals("/api/users/login")
-    	            || request.getServletPath().equals("/api/users/register")) {
 
-    	        filterChain.doFilter(request, response);
-    	        return;
-    	    }
+        // Allow CORS Preflight Requests
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
+        String path = request.getServletPath();
 
+        // Skip Login & Register
+        if (path.equals("/api/users/login")
+                || path.equals("/api/users/register")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String authHeader = request.getHeader("Authorization");
 
-        String token = null;
-        String email = null;
-
-
-        if(authHeader != null && authHeader.startsWith("Bearer ")) {
-
-            token = authHeader.substring(7);
-
-            email = jwtService.extractUsername(token);
+        // No Token
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
+        String token = authHeader.substring(7);
 
-        if(email != null &&
-                SecurityContextHolder.getContext()
-                .getAuthentication() == null) {
+        String email = jwtService.extractUsername(token);
 
+        if (email != null
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails =
                     userDetailsService.loadUserByUsername(email);
 
-
-            if(jwtService.validateToken(token, email)) {
-
+            if (jwtService.validateToken(token, email)) {
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
-                                userDetails.getAuthorities()
-                        );
-
+                                userDetails.getAuthorities());
 
                 authentication.setDetails(
                         new WebAuthenticationDetailsSource()
-                        .buildDetails(request)
-                );
-
+                                .buildDetails(request));
 
                 SecurityContextHolder.getContext()
-                .setAuthentication(authentication);
-
+                        .setAuthentication(authentication);
             }
         }
-
 
         filterChain.doFilter(request, response);
     }

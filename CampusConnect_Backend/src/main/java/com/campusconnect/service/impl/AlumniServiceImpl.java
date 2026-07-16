@@ -16,6 +16,7 @@ public class AlumniServiceImpl implements AlumniService {
 
     @Autowired
     private AlumniRepository alumniRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -29,6 +30,7 @@ public class AlumniServiceImpl implements AlumniService {
 
         return alumniRepository.save(alumni);
     }
+
     @Override
     public Alumni updateAlumni(Long alumniId, Alumni alumni) {
 
@@ -52,7 +54,6 @@ public class AlumniServiceImpl implements AlumniService {
 
     @Override
     public Alumni getAlumniById(Long alumniId) {
-
         return alumniRepository.findById(alumniId)
                 .orElseThrow(() -> new RuntimeException("Alumni not found"));
     }
@@ -72,7 +73,23 @@ public class AlumniServiceImpl implements AlumniService {
     }
 
     @Override
+    public List<Alumni> searchByCompany(String companyName) {
+        return alumniRepository.findByCompanyNameContainingIgnoreCase(companyName);
+    }
+
+    @Override
+    public List<Alumni> searchByDesignation(String designation) {
+        return alumniRepository.findByDesignationContainingIgnoreCase(designation);
+    }
+
+    @Override
     public List<Alumni> searchByExpertise(String expertise) {
         return alumniRepository.findByExpertiseContainingIgnoreCase(expertise);
+    }
+
+    @Override
+    public Alumni getAlumniByUser(User user) {
+        return alumniRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Alumni not found"));
     }
 }

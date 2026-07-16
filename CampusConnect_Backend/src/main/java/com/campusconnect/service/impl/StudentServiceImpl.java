@@ -1,73 +1,180 @@
 package com.campusconnect.service.impl;
 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.campusconnect.entity.Student;
-import com.campusconnect.entity.User;
+import com.campusconnect.entity.Alumni;
+
 import com.campusconnect.repository.StudentRepository;
-import com.campusconnect.repository.UserRepository;
+import com.campusconnect.repository.AlumniRepository;
+
 import com.campusconnect.service.StudentService;
+
+
 
 @Service
 public class StudentServiceImpl implements StudentService {
 
+
+
     @Autowired
     private StudentRepository studentRepository;
+
+
     @Autowired
-    private UserRepository userRepository;
+    private AlumniRepository alumniRepository;
+
+
+
 
     @Override
-    public Student saveStudent(Student student) {
-
-        User user = userRepository.findById(student.getUser().getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        student.setUser(user);
+    public Student saveStudent(Student student){
 
         return studentRepository.save(student);
     }
-    @Override
-    public Student updateStudent(Long studentId, Student student) {
 
-        Student existingStudent = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        existingStudent.setRollNumber(student.getRollNumber());
-        existingStudent.setCollegeName(student.getCollegeName());
-        existingStudent.setBranch(student.getBranch());
-        existingStudent.setYear(student.getYear());
-        existingStudent.setPhone(student.getPhone());
-        existingStudent.setBio(student.getBio());
-        existingStudent.setSkills(student.getSkills());
-        existingStudent.setGithubUrl(student.getGithubUrl());
-        existingStudent.setLinkedinUrl(student.getLinkedinUrl());
-        existingStudent.setProfileImage(student.getProfileImage());
-        existingStudent.setCollegeIdCard(student.getCollegeIdCard());
 
-        return studentRepository.save(existingStudent);
-    }
+
 
     @Override
-    public Student getStudentById(Long studentId) {
+    public Student getStudentById(Long studentId){
 
         return studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(
+                () -> new RuntimeException("Student not found"));
     }
 
+
+
+
+
     @Override
-    public List<Student> getAllStudents() {
+    public List<Student> getAllStudents(){
+
         return studentRepository.findAll();
     }
 
+
+
+
+
     @Override
-    public void deleteStudent(Long studentId) {
+    public Student updateStudent(
+            Long studentId,
+            Student student){
 
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        studentRepository.delete(student);
+        Student existing =
+                studentRepository.findById(studentId)
+                .orElseThrow(
+                () -> new RuntimeException("Student not found"));
+
+
+
+        existing.setCollegeName(
+                student.getCollegeName());
+
+        existing.setBranch(
+                student.getBranch());
+
+        existing.setYear(
+                student.getYear());
+
+        existing.setPhone(
+                student.getPhone());
+
+        existing.setBio(
+                student.getBio());
+
+        existing.setSkills(
+                student.getSkills());
+
+        existing.setGithubUrl(
+                student.getGithubUrl());
+
+        existing.setLinkedinUrl(
+                student.getLinkedinUrl());
+
+        existing.setProfileImage(
+                student.getProfileImage());
+
+
+        return studentRepository.save(existing);
     }
+
+
+
+
+
+    @Override
+    public void deleteStudent(Long studentId){
+
+        studentRepository.deleteById(studentId);
+
+    }
+
+
+
+
+
+    // View All Alumni
+
+    @Override
+    public List<Alumni> getAllAlumni(){
+
+        return alumniRepository.findAll();
+
+    }
+
+
+
+
+
+    // Search Alumni
+
+    @Override
+    public List<Alumni> searchAlumni(
+            String company,
+            String skills,
+            String role){
+
+
+
+        if(company != null){
+
+            return alumniRepository
+            .findByCompanyNameContainingIgnoreCase(company);
+
+        }
+
+
+
+        if(skills != null){
+
+            return alumniRepository
+            .findByExpertiseContainingIgnoreCase(skills);
+
+        }
+
+
+
+        if(role != null){
+
+            return alumniRepository
+            .findByDesignationContainingIgnoreCase(role);
+
+        }
+
+
+
+        return alumniRepository.findAll();
+
+    }
+
+
 }
