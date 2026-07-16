@@ -9,6 +9,7 @@ import com.campusconnect.entity.Project;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-	 List<Project> findByDomainContainingIgnoreCase(String domain);
+
+    List<Project> findByDomainContainingIgnoreCase(String domain);
 
 }

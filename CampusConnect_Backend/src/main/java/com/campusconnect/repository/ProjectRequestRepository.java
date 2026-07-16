@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 import com.campusconnect.entity.ProjectRequest;
 
 @Repository
-public interface ProjectRequestRepository extends JpaRepository<ProjectRequest, Long> {
+public interface ProjectRequestRepository 
+        extends JpaRepository<ProjectRequest, Long> {
 
     List<ProjectRequest> findByProjectId(Long projectId);
 

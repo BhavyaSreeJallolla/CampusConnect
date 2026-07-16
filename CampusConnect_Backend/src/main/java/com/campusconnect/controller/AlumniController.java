@@ -1,7 +1,6 @@
 package com.campusconnect.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +16,12 @@ public class AlumniController {
     @Autowired
     private AlumniService alumniService;
 
-    // Alumni creates own profile
+
     @PostMapping
     public Alumni saveAlumni(@RequestBody Alumni alumni) {
         return alumniService.saveAlumni(alumni);
     }
+
 
     // Get Alumni By Id
     @GetMapping("/{alumniId}")
@@ -29,32 +29,39 @@ public class AlumniController {
         return alumniService.getAlumniById(alumniId);
     }
 
+
     // Get All Alumni
     @GetMapping
     public List<Alumni> getAllAlumni() {
         return alumniService.getAllAlumni();
     }
 
-    // Search Alumni By Expertise
-    @GetMapping("/search")
-    public List<Alumni> searchByExpertise(@RequestParam String expertise) {
+
+
+    }
+
+
+    // Search By Company
+    @GetMapping("/search/company")
+    public List<Alumni> searchByCompany(
+            @RequestParam String companyName) {
+
+        return alumniService.searchByCompany(companyName);
+    }
+
+    // Search By Designation
+    @GetMapping("/search/designation")
+    public List<Alumni> searchByDesignation(
+            @RequestParam String designation) {
+
+        return alumniService.searchByDesignation(designation);
+    }
+
+    // Search By Expertise
+    @GetMapping("/search/expertise")
+    public List<Alumni> searchByExpertise(
+            @RequestParam String expertise) {
+
         return alumniService.searchByExpertise(expertise);
-    }
-
-    // Alumni updates own profile
-    @PutMapping("/profile")
-    public Alumni updateMyProfile(@RequestBody Alumni alumni,
-                                  Authentication authentication) {
-
-        return alumniService.updateMyProfile(
-                authentication.getName(),
-                alumni);
-    }
-    @DeleteMapping("/profile")
-    public String deleteMyProfile(Authentication authentication) {
-
-        alumniService.deleteMyProfile(authentication.getName());
-
-        return "Alumni account deleted successfully.";
     }
 }

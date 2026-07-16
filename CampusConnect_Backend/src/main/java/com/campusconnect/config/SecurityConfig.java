@@ -24,7 +24,9 @@ public class SecurityConfig {
 
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     private final CustomUserDetailsService customUserDetailsService;
+
 
 
     public SecurityConfig(
@@ -36,44 +38,46 @@ public class SecurityConfig {
     }
 
 
+
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http) throws Exception {
 
 
         http
+
+            // Disable CSRF for REST API
             .csrf(csrf -> csrf.disable())
 
+
+            // JWT based authentication
             .sessionManagement(session ->
                 session.sessionCreationPolicy(
                     SessionCreationPolicy.STATELESS
                 )
             )
 
+
             .authorizeHttpRequests(auth -> auth
 
-                // Allow registration and login
+
+                // Public APIs
                 .requestMatchers(
                     "/api/users/register",
-                    "/api/users/login",
-                    "/api/projects/**"
-                ).permitAll()
 
 
-                // Role based access
+
+
+                // Admin APIs
                 .requestMatchers("/api/admin/**")
                 .hasRole("ADMIN")
 
 
-                .requestMatchers("/api/students/**")
-                .hasAnyRole("STUDENT","ADMIN")
 
-                .requestMatchers(HttpMethod.DELETE, "/api/students/profile").hasRole("STUDENT")
-//               
-                
-             // Only Alumni can create their profile
-                .requestMatchers(HttpMethod.POST, "/api/alumni")
-                .hasRole("ALUMNI")
+                // Student APIs
+                .requestMatchers("/api/students/**")
+
 
                 // Only Alumni can update their own profile
                 .requestMatchers(HttpMethod.PUT, "/api/alumni/profile")
@@ -81,16 +85,35 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/alumni/profile").hasRole("ALUMNI")
 
 
+
                 // Everyone can view/search alumni
                 .requestMatchers(HttpMethod.GET, "/api/alumni/**")
                 .hasAnyRole("STUDENT", "ALUMNI", "ADMIN")
                 
 
+                // Chat APIs
+                .requestMatchers("/api/chat/**")
+                .hasAnyRole(
+                    "STUDENT",
+                    "ALUMNI",
+                    "ADMIN"
+                )
+
+
+
+                // Everything else
                 .anyRequest()
                 .authenticated()
+
             )
 
-            .authenticationProvider(authenticationProvider())
+
+
+            .authenticationProvider(
+                authenticationProvider()
+            )
+
+
 
             .addFilterBefore(
                 jwtAuthenticationFilter,
@@ -98,25 +121,41 @@ public class SecurityConfig {
             );
 
 
+
         return http.build();
     }
+
+
+
 
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(customUserDetailsService);
 
-        provider.setPasswordEncoder(passwordEncoder());
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(
+                    customUserDetailsService
+                );
+
+
+        provider.setPasswordEncoder(
+                passwordEncoder()
+        );
+
 
         return provider;
     }
+
+
+
 
 
     @Bean
     public PasswordEncoder passwordEncoder() {
 
         return new BCryptPasswordEncoder();
+
     }
+
 }

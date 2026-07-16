@@ -1,31 +1,4 @@
-package com.campusconnect.service;
-
-import java.util.List;
-
-import com.campusconnect.entity.Project;
-import com.campusconnect.entity.ProjectRequest;
-
-public interface ProjectService {
-
-    Project createProject(Project project);
-
-    List<Project> searchProjects(String domain);
-
-    List<Project> getAllProjects();
-
-    Project getProjectById(Long id);
-
-    Project updateProject(Long id, Project project);
-
-    void deleteProject(Long id);
-
-    ProjectRequest joinProject(Long projectId, Long studentId);
-
-    List<ProjectRequest> getProjectRequests(Long projectId);
-
-    ProjectRequest acceptRequest(Long requestId);
-
-    ProjectRequest rejectRequest(Long requestId);
+package com.campusconnect.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,37 +11,44 @@ import com.campusconnect.entity.ProjectRequest;
 import com.campusconnect.enums.RequestStatus;
 import com.campusconnect.repository.ProjectRepository;
 import com.campusconnect.repository.ProjectRequestRepository;
+import com.campusconnect.service.ProjectService;
 
 @Service
-public class ProjectService {
+public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private ProjectRepository projectRepository;
 
     @Autowired
     private ProjectRequestRepository projectRequestRepository;
+
+    @Override
     public Project createProject(Project project) {
 
         project.setCreatedDate(LocalDateTime.now());
 
         return projectRepository.save(project);
-
     }
+
+    @Override
     public List<Project> searchProjects(String domain) {
 
         return projectRepository.findByDomainContainingIgnoreCase(domain);
-
     }
+
+    @Override
     public List<Project> getAllProjects() {
 
         return projectRepository.findAll();
-
     }
+
+    @Override
     public Project getProjectById(Long id) {
 
         return projectRepository.findById(id).orElse(null);
-
     }
+
+    @Override
     public Project updateProject(Long id, Project project) {
 
         Project existingProject = projectRepository.findById(id).orElse(null);
@@ -87,11 +67,14 @@ public class ProjectService {
 
         return null;
     }
+
+    @Override
     public void deleteProject(Long id) {
 
         projectRepository.deleteById(id);
-
     }
+
+    @Override
     public ProjectRequest joinProject(Long projectId, Long studentId) {
 
         ProjectRequest request = new ProjectRequest();
@@ -103,11 +86,14 @@ public class ProjectService {
 
         return projectRequestRepository.save(request);
     }
+
+    @Override
     public List<ProjectRequest> getProjectRequests(Long projectId) {
 
         return projectRequestRepository.findByProjectId(projectId);
-
     }
+
+    @Override
     public ProjectRequest acceptRequest(Long requestId) {
 
         ProjectRequest request = projectRequestRepository.findById(requestId).orElse(null);
@@ -119,6 +105,8 @@ public class ProjectService {
 
         return null;
     }
+
+    @Override
     public ProjectRequest rejectRequest(Long requestId) {
 
         ProjectRequest request = projectRequestRepository.findById(requestId).orElse(null);

@@ -75,7 +75,6 @@ public class AlumniServiceImpl implements AlumniService {
 
     @Override
     public Alumni getAlumniById(Long alumniId) {
-
         return alumniRepository.findById(alumniId)
                 .orElseThrow(() -> new RuntimeException("Alumni not found"));
     }
@@ -95,65 +94,23 @@ public class AlumniServiceImpl implements AlumniService {
     }
 
     @Override
+    public List<Alumni> searchByCompany(String companyName) {
+        return alumniRepository.findByCompanyNameContainingIgnoreCase(companyName);
+    }
+
+    @Override
+    public List<Alumni> searchByDesignation(String designation) {
+        return alumniRepository.findByDesignationContainingIgnoreCase(designation);
+    }
+
+    @Override
     public List<Alumni> searchByExpertise(String expertise) {
         return alumniRepository.findByExpertiseContainingIgnoreCase(expertise);
     }
 
     @Override
-    public Alumni updateMyProfile(String email, Alumni alumni) {
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Alumni existingAlumni = alumniRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Alumni profile not found"));
-
-        if (alumni.getCollegeName() != null)
-            existingAlumni.setCollegeName(alumni.getCollegeName());
-
-        if (alumni.getGraduationYear() != null)
-            existingAlumni.setGraduationYear(alumni.getGraduationYear());
-
-        if (alumni.getCompanyName() != null)
-            existingAlumni.setCompanyName(alumni.getCompanyName());
-
-        if (alumni.getDesignation() != null)
-            existingAlumni.setDesignation(alumni.getDesignation());
-
-        if (alumni.getExperience() != null)
-            existingAlumni.setExperience(alumni.getExperience());
-
-        if (alumni.getPhone() != null)
-            existingAlumni.setPhone(alumni.getPhone());
-
-        if (alumni.getBio() != null)
-            existingAlumni.setBio(alumni.getBio());
-
-        if (alumni.getExpertise() != null)
-            existingAlumni.setExpertise(alumni.getExpertise());
-
-        if (alumni.getLinkedinUrl() != null)
-            existingAlumni.setLinkedinUrl(alumni.getLinkedinUrl());
-
-        if (alumni.getProfileImage() != null)
-            existingAlumni.setProfileImage(alumni.getProfileImage());
-
-        if (alumni.getCompanyIdCard() != null)
-            existingAlumni.setCompanyIdCard(alumni.getCompanyIdCard());
-
-        return alumniRepository.save(existingAlumni);
-    }
-    @Override
-    public void deleteMyProfile(String email) {
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Alumni alumni = alumniRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Alumni profile not found"));
-
-        alumniRepository.delete(alumni);
-
-        userRepository.delete(user);
+    public Alumni getAlumniByUser(User user) {
+        return alumniRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Alumni not found"));
     }
 }
